@@ -1,0 +1,13 @@
+use_frameworks!
+
+platform :ios, '10.0'
+
+target 'Go23WalletENS_Example' do
+  pod 'Go23WalletENS', :path => '../'
+
+  target 'Go23WalletENS_Tests' do
+    inherit! :search_paths
+
+    pod 'FBSnapshotTestCase' , '~> 2.1.4'
+  end
+end
