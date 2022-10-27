@@ -1,4 +1,8 @@
+source "https://github.com/TaranWu/Go23WalletSpec.git"
+source 'https://github.com/CocoaPods/Specs.git'
+
 use_frameworks!
+
 
 platform :ios, '13.0'
 
@@ -8,6 +12,5 @@ target 'Go23WalletENS_Example' do
   target 'Go23WalletENS_Tests' do
     inherit! :search_paths
 
-    pod 'FBSnapshotTestCase' , '~> 2.1.4'
   end
 end

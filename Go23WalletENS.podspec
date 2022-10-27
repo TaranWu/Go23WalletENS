@@ -33,6 +33,6 @@ Pod::Spec.new do |s|
   
   s.dependency 'Go23WalletAddress'
   s.dependency 'PromiseKit'
-  s.dependency 'web3swift'
+  s.dependency 'Go23Web3Swift'
   s.dependency 'Go23WalletCore'
 end

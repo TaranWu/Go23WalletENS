@@ -5,11 +5,10 @@
 //  Created by Tatan.
 
 import Foundation
-//import DerbyWalletAddress
+import Go23WalletAddress
 
-//extension DerbyWallet.Address {
-//    //https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md
-//    var nameHash: String {
-//        "\(eip55String.drop0x).addr.reverse".lowercased().nameHash
-//    }
-//}
+extension DerbyWallet.Address {
+    var nameHash: String {
+        "\(eip55String.drop0x).addr.reverse".lowercased().nameHash
+    }
+}

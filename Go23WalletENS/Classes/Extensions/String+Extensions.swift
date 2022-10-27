@@ -7,7 +7,6 @@
 import Foundation
 
 extension String {
-    //https://github.com/ethereum/EIPs/blob/master/EIPS/eip-137.md
     public var nameHash: String {
         var node = [UInt8].init(repeating: 0x0, count: 32)
         if !self.isEmpty {
