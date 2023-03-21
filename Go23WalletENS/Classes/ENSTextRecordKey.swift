@@ -1,8 +1,8 @@
 //
 //  EnsTextRecordKey.swift
-//  DerbyWalletENS
+//  Go23WalletENS
 //
-//  Created by Tatan.
+//  Created by Taran.
 
 public enum EnsTextRecordKey: Equatable, Hashable {
     /// A URL to an image used as an avatar or logo

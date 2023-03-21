@@ -1,0 +1,75 @@
+PODS:
+  - Alamofire (5.6.4)
+  - BigInt (5.2.0)
+  - CryptoSwift (1.6.0)
+  - Go23EthereumAddress (0.1.0):
+    - CryptoSwift (~> 1.0)
+  - Go23TrustKeystore (0.3.0):
+    - CryptoSwift (~> 1.0)
+    - secp256k1_ios (~> 0.1.0)
+  - Go23WalletAddress (1.0.1):
+    - Go23EthereumAddress
+    - Go23TrustKeystore
+    - Go23WalletCore
+    - Go23Web3Swift
+  - Go23WalletCore (1.0.2):
+    - Alamofire (= 5.6.4)
+    - PromiseKit
+  - Go23WalletENS (1.0.2):
+    - Go23WalletAddress
+    - Go23WalletCore
+    - Go23Web3Swift
+    - PromiseKit
+  - Go23Web3Swift (0.3.1):
+    - BigInt
+    - CryptoSwift
+    - PromiseKit (~> 6.3.0)
+    - secp256k1_ios (~> 0.1.3)
+  - PromiseKit (6.3.5):
+    - PromiseKit/CorePromise (= 6.3.5)
+    - PromiseKit/Foundation (= 6.3.5)
+    - PromiseKit/UIKit (= 6.3.5)
+  - PromiseKit/CorePromise (6.3.5)
+  - PromiseKit/Foundation (6.3.5):
+    - PromiseKit/CorePromise
+  - PromiseKit/UIKit (6.3.5):
+    - PromiseKit/CorePromise
+  - secp256k1_ios (0.1.3)
+
+DEPENDENCIES:
+  - Go23WalletENS (from `../`)
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - Alamofire
+    - BigInt
+    - CryptoSwift
+    - PromiseKit
+    - secp256k1_ios
+  https://github.com/TaranWu/Go23WalletSpec.git:
+    - Go23EthereumAddress
+    - Go23TrustKeystore
+    - Go23WalletAddress
+    - Go23WalletCore
+    - Go23Web3Swift
+
+EXTERNAL SOURCES:
+  Go23WalletENS:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Alamofire: 4e95d97098eacb88856099c4fc79b526a299e48c
+  BigInt: f668a80089607f521586bbe29513d708491ef2f7
+  CryptoSwift: 562f8eceb40e80796fffc668b0cad9313284cfa6
+  Go23EthereumAddress: 020aef86a999274abb99331c49ad085c0a2c1b46
+  Go23TrustKeystore: f1d1678671e0617337720ceec1b6697f56d2fbdc
+  Go23WalletAddress: 8c2142330c5fda42541284cbc3e0c486376157f0
+  Go23WalletCore: ac87f9f87651aa105ac33d611705480247032ca3
+  Go23WalletENS: 852ce3c8b545f71365d5c08b081b7ba71cc6cfcc
+  Go23Web3Swift: a2b151b6042392804bbf542c0cccac7a12cc804e
+  PromiseKit: 32c36425387e9cfc7f1206f27bfd906d0b53c0d6
+  secp256k1_ios: ac9ef04e761f43c58012b28548afa91493761f17
+
+PODFILE CHECKSUM: 1a7c2a5f07873f7b500b43212d588288422e2bb1
+
+COCOAPODS: 1.11.3

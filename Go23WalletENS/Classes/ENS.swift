@@ -1,8 +1,8 @@
 //
 //  ENS.swift
-//  DerbyWalletENS
+//  Go23WalletENS
 //
-//  Created by Tatan.
+//  Created by Taran.
 //
 
 import Foundation
@@ -19,24 +19,24 @@ public enum SmartContractError: Error {
 }
 
 public protocol ENSDelegate: AnyObject {
-    func callSmartContract(withChainId chainId: ChainId, contract: DerbyWallet.Address, functionName: String, abiString: String, parameters: [AnyObject]) -> AnyPublisher<[String: Any], SmartContractError>
-    func getSmartContractCallData(withChainId chainId: ChainId, contract: DerbyWallet.Address, functionName: String, abiString: String, parameters: [AnyObject]) -> Data?
-    func getInterfaceSupported165(chainId: Int, hash: String, contract: DerbyWallet.Address) -> AnyPublisher<Bool, SmartContractError>
+    func callSmartContract(withChainId chainId: ChainId, contract: Go23Wallet.Address, functionName: String, abiString: String, parameters: [AnyObject]) -> AnyPublisher<[String: Any], SmartContractError>
+    func getSmartContractCallData(withChainId chainId: ChainId, contract: Go23Wallet.Address, functionName: String, abiString: String, parameters: [AnyObject]) -> Data?
+    func getInterfaceSupported165(chainId: Int, hash: String, contract: Go23Wallet.Address) -> AnyPublisher<Bool, SmartContractError>
 }
 
 extension ENSDelegate {
-    func callSmartContract(withChainId chainId: ChainId, contract: DerbyWallet.Address, functionName: String, abiString: String, parameters: [AnyObject] = []) -> AnyPublisher<[String: Any], SmartContractError> {
+    func callSmartContract(withChainId chainId: ChainId, contract: Go23Wallet.Address, functionName: String, abiString: String, parameters: [AnyObject] = []) -> AnyPublisher<[String: Any], SmartContractError> {
         callSmartContract(withChainId: chainId, contract: contract, functionName: functionName, abiString: abiString, parameters: parameters)
     }
 
-    func getSmartContractCallData(withChainId chainId: ChainId, contract: DerbyWallet.Address, functionName: String, abiString: String, parameters: [AnyObject] = []) -> Data? {
+    func getSmartContractCallData(withChainId chainId: ChainId, contract: Go23Wallet.Address, functionName: String, abiString: String, parameters: [AnyObject] = []) -> Data? {
         getSmartContractCallData(withChainId: chainId, contract: contract, functionName: functionName, abiString: abiString, parameters: parameters)
     }
 }
 
 public class ENS {
     //Always Ethereum mainnet's. For now at least
-    private static let registrarContract = DerbyWallet.Address(string: "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e")!
+    private static let registrarContract = Go23Wallet.Address(string: "0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e")!
 
     public static var isLoggingEnabled = false
 
@@ -48,9 +48,9 @@ public class ENS {
         self.chainId = chainId
     }
 
-    public func getENSAddress(fromName name: String) -> AnyPublisher<DerbyWallet.Address, SmartContractError> {
+    public func getENSAddress(fromName name: String) -> AnyPublisher<Go23Wallet.Address, SmartContractError> {
         //if already an address, send back the address
-        if let ethAddress = DerbyWallet.Address(string: name) { return .just(ethAddress) }
+        if let ethAddress = Go23Wallet.Address(string: name) { return .just(ethAddress) }
 
         //if it does not contain .eth, then it is not a valid ens name
         if !name.contains(".") {
@@ -58,9 +58,9 @@ public class ENS {
         }
 
         return getResolver(forName: name)
-            .flatMap { resolver -> AnyPublisher<(DerbyWallet.Address, Bool), SmartContractError> in
+            .flatMap { resolver -> AnyPublisher<(Go23Wallet.Address, Bool), SmartContractError> in
                 self.isSupportEnsIp10(resolver: resolver).map { (resolver, $0) }.eraseToAnyPublisher()
-            }.flatMap { resolver, supportsEnsIp10 -> AnyPublisher<DerbyWallet.Address, SmartContractError> in
+            }.flatMap { resolver, supportsEnsIp10 -> AnyPublisher<Go23Wallet.Address, SmartContractError> in
                 verboseLog("[ENS] Fetch resolver: \(resolver.eip55String) supports ENSIP-10? \(supportsEnsIp10) for name: \(name)")
                 let node = name.lowercased().nameHash
                 if supportsEnsIp10 {
@@ -71,7 +71,7 @@ public class ENS {
             }.eraseToAnyPublisher()
     }
 
-    public func getName(fromAddress address: DerbyWallet.Address) -> AnyPublisher<String, SmartContractError> {
+    public func getName(fromAddress address: Go23Wallet.Address) -> AnyPublisher<String, SmartContractError> {
         //TODO improve if delegate is nil
         guard let delegate = delegate else { return .fail(SmartContractError.delegateNotFound) }
 
@@ -83,14 +83,14 @@ public class ENS {
                 let error = ENSError(description: "Error extracting result from \(Self.registrarContract).\(function.name)()")
                 return .fail(.embeded(error))
             }
-            let resolver = DerbyWallet.Address(address: resolverEthereumAddress)
+            let resolver = Go23Wallet.Address(address: resolverEthereumAddress)
             guard !resolver.isNull else {
                 let error = ENSError(description: "Null address returned")
                 return .fail(.embeded(error))
             }
             let function = ENSReverseLookupEncode()
             return delegate.callSmartContract(withChainId: chainId, contract: resolver, functionName: function.name, abiString: function.abi, parameters: [node] as [AnyObject])
-        }.flatMap { result -> AnyPublisher<(String, DerbyWallet.Address), SmartContractError> in
+        }.flatMap { result -> AnyPublisher<(String, Go23Wallet.Address), SmartContractError> in
             guard let ensName = result["0"] as? String, ensName.contains(".") else {
                 let error = ENSError(description: "Incorrect data output from ENS resolver")
                 return .fail(.embeded(error))
@@ -124,7 +124,7 @@ public class ENS {
         .eraseToAnyPublisher()
     }
 
-    private func isSupportEnsIp10(resolver: DerbyWallet.Address) -> AnyPublisher<Bool, SmartContractError> {
+    private func isSupportEnsIp10(resolver: Go23Wallet.Address) -> AnyPublisher<Bool, SmartContractError> {
         //TODO improve if delegate is nil
         guard let delegate = delegate else { return .fail(.delegateNotFound) }
 
@@ -132,15 +132,15 @@ public class ENS {
         return delegate.getInterfaceSupported165(chainId: chainId, hash: hash, contract: resolver)
     }
 
-    private func getResolver(forName name: String) -> AnyPublisher<DerbyWallet.Address, SmartContractError> {
+    private func getResolver(forName name: String) -> AnyPublisher<Go23Wallet.Address, SmartContractError> {
         //TODO improve if delegate is nil
         guard let delegate = delegate else { return .fail(.delegateNotFound) }
 
         let function = GetENSResolverEncode()
         let chainId = chainId
         let node = name.lowercased().nameHash
-        return delegate.callSmartContract(withChainId: chainId, contract: Self.registrarContract, functionName: function.name, abiString: function.abi, parameters: [node] as [AnyObject]).flatMap { result -> AnyPublisher<DerbyWallet.Address, SmartContractError> in
-            if let resolver = (result["0"] as? EthereumAddress).flatMap({ DerbyWallet.Address(address: $0) }) {
+        return delegate.callSmartContract(withChainId: chainId, contract: Self.registrarContract, functionName: function.name, abiString: function.abi, parameters: [node] as [AnyObject]).flatMap { result -> AnyPublisher<Go23Wallet.Address, SmartContractError> in
+            if let resolver = (result["0"] as? EthereumAddress).flatMap({ Go23Wallet.Address(address: $0) }) {
                 verboseLog("[ENS] fetched resolver: \(resolver) for: \(name) arg: \(node)")
                 if resolver.isNull && name != "" {
                     //Wildcard resolution https://docs.ens.domains/ens-improvement-proposals/ensip-10-wildcard-resolution
@@ -162,7 +162,7 @@ public class ENS {
         }.eraseToAnyPublisher()
     }
 
-    private func getENSAddressFromResolverUsingAddr(forName name: String, node: String, resolver: DerbyWallet.Address) -> AnyPublisher<DerbyWallet.Address, SmartContractError> {
+    private func getENSAddressFromResolverUsingAddr(forName name: String, node: String, resolver: Go23Wallet.Address) -> AnyPublisher<Go23Wallet.Address, SmartContractError> {
         //TODO improve if delegate is nil
         guard let delegate = delegate else { return .fail(.delegateNotFound) }
 
@@ -171,7 +171,7 @@ public class ENS {
         verboseLog("[ENS] calling function \(function.name) for name: \(name)…")
         return delegate.callSmartContract(withChainId: chainId, contract: resolver, functionName: function.name, abiString: function.abi, parameters: [node] as [AnyObject]).tryMap { result in
             guard let ensAddressEthereumAddress = result["0"] as? EthereumAddress else { throw ENSError(description: "Incorrect data output from ENS resolver") }
-            let ensAddress = DerbyWallet.Address(address: ensAddressEthereumAddress)
+            let ensAddress = Go23Wallet.Address(address: ensAddressEthereumAddress)
             verboseLog("[ENS] called function \(function.name) for name: \(name) result: \(ensAddress.eip55String)")
             guard !ensAddress.isNull else { throw ENSError(description: "Null address returned") }
             return ensAddress
@@ -179,7 +179,7 @@ public class ENS {
         .eraseToAnyPublisher()
     }
 
-    private func getENSAddressFromResolverUsingResolve(forName name: String, node: String, resolver: DerbyWallet.Address) -> AnyPublisher<DerbyWallet.Address, SmartContractError> {
+    private func getENSAddressFromResolverUsingResolve(forName name: String, node: String, resolver: Go23Wallet.Address) -> AnyPublisher<Go23Wallet.Address, SmartContractError> {
         //TODO improve if delegate is nil
         guard let delegate = delegate else { return .fail(.delegateNotFound) }
 
@@ -203,19 +203,19 @@ public class ENS {
             let addressStringLeftPaddedWithZeros = addressStringAsData.hexString
             let addressString = String(addressStringLeftPaddedWithZeros.dropFirst(addressStringLeftPaddedWithZeros.count - 40))
             verboseLog("[ENS] called function \(resolveFunction.name) for name: \(name) result: \(addressString)")
-            guard let address = DerbyWallet.Address(uncheckedAgainstNullAddress: addressString) else { throw ENSError(description: "Incorrect data output from ENS resolver") }
+            guard let address = Go23Wallet.Address(uncheckedAgainstNullAddress: addressString) else { throw ENSError(description: "Incorrect data output from ENS resolver") }
             guard !address.isNull else { throw ENSError(description: "Null address returned") }
             return address
         }.mapError { err in SmartContractError.embeded(err) }
         .eraseToAnyPublisher()
     }
 
-    private func getENSRecordsContract(forChainId chainId: ChainId) -> DerbyWallet.Address {
+    private func getENSRecordsContract(forChainId chainId: ChainId) -> Go23Wallet.Address {
         //TODO why POA does use a different one but we use the same ENS registrar contract for all chains?
         if chainId == 99 {
-            return DerbyWallet.Address(string: "0xF60cd4F86141D7Fe4A1A9961451Ea09230A14617")!
+            return Go23Wallet.Address(string: "0xF60cd4F86141D7Fe4A1A9961451Ea09230A14617")!
         } else {
-            return DerbyWallet.Address(string: "0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41")!
+            return Go23Wallet.Address(string: "0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41")!
         }
     }
 }

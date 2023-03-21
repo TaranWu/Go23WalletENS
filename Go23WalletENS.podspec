@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'Go23WalletENS'
-  s.version          = '1.0.1'
+  s.version          = '1.0.2'
   s.summary          = 'Go23Wallet ENS functionality'
 
   s.description      = 'ENS functionality'

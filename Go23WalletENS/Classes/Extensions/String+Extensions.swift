@@ -1,8 +1,8 @@
 //
 //  String+Extensions.swift
-//  DerbyWalletENS
+//  Go23WalletENS
 //
-//  Created by Tatan.
+//  Created by Taran.
 
 import Foundation
 
